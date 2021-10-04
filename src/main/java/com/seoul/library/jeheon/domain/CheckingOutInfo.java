@@ -8,7 +8,8 @@ import java.util.List;
 
 @Entity
 @Getter
-public class CheckingOutInfo {
+@Table(name = "checking_out_info")
+public class CheckingOutInfo extends BaseEntity{
     @Id @GeneratedValue
     @Column(name = "checking_out_info_id")
     private long id;

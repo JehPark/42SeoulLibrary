@@ -2,14 +2,12 @@ package com.seoul.library.jeheon.domain;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
-public class Book {
+@Table(name = "books")
+public class Book extends BaseEntity{
 
     @Id @GeneratedValue
     @Column(name = "book_id")
@@ -18,8 +16,5 @@ public class Book {
     private String author;
     private String publisher;
     private int quantity;
-    private String info;
     private String urlToYes24;
-
-    private String checkingOut;
 }
