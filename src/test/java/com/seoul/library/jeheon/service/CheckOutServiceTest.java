@@ -1,21 +1,28 @@
 package com.seoul.library.jeheon.service;
 
 import com.seoul.library.jeheon.domain.Book;
+import com.seoul.library.jeheon.domain.CheckingOut;
+import com.seoul.library.jeheon.domain.CheckingOutInfo;
 import com.seoul.library.jeheon.domain.User;
 import com.seoul.library.jeheon.repository.BookRepository;
 import com.seoul.library.jeheon.repository.CheckingOutInfoRepository;
 import com.seoul.library.jeheon.repository.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 @SpringBootTest
 class CheckOutServiceTest {
 
@@ -25,6 +32,8 @@ class CheckOutServiceTest {
     UserRepository userRepository;
     @Autowired
     CheckOutService checkOutService;
+    @Autowired
+    CheckingOutInfoRepository checkingOutInfoRepository;
 
     @BeforeEach
     public void mockDataInjection(){
@@ -74,14 +83,36 @@ class CheckOutServiceTest {
         final User user = all.get(0);
         final List<Book> books = bookRepository.findAllById(List.of(1L, 2L, 3L));
 
-        for (Book book : books) {
-            System.out.println("book.getQuantity() = " + book.getQuantity());
-        }
         //when
-        checkOutService.checkout(user.getId(), List.of(1L, 2L, 3L), List.of(1, 1, 1));
-        //then
+        final CheckingOutInfo checkingOutInfo = CheckingOutInfo.createCheckingOutInfo(user);
         for (Book book : books) {
-            System.out.println("book.getQuantity() = " + book.getQuantity());
+            checkOutService.checkout(user.getId(), checkingOutInfo, book.getId());
+        }
+
+        final CheckingOutInfo checkingOutInfo1 = user.getCheckingOutInfos().get(0);
+        final List<CheckingOut> checkingOuts = checkingOutInfo1.getCheckingOuts();
+        int i = 0;
+        for (CheckingOut checkingOut : checkingOuts) {
+            Assertions.assertThat(checkingOut.getBook().getTitle()).isEqualTo(books.get(i++).getTitle());
+        }
+    }
+
+    @Test
+    @Rollback(false)
+    public void 반납테스트() throws Exception{
+        //given
+        final List<User> all = userRepository.findAll();
+        final User user = all.get(0);
+        final List<Book> books = bookRepository.findAllById(List.of(1L, 2L, 3L));
+
+        //when
+        final CheckingOutInfo checkingOutInfo = CheckingOutInfo.createCheckingOutInfo(user);
+        for (Book book : books) {
+            checkOutService.checkout(user.getId(), checkingOutInfo, book.getId());
+        }
+        //then
+        for (CheckingOut checkingOut :checkingOutInfo.getCheckingOuts()){
+            checkOutService.bookReturn(checkingOut.getId(), checkingOutInfo.getId());
         }
     }
 }

@@ -22,25 +22,36 @@ public class CheckOutService {
     final private CheckingOutInfoRepository checkingOutInfoRepository;
     final private UserRepository userRepository;
     final private BookRepository bookRepository;
+    final private CheckingOutRepository checkingOutRepository;
 
     @Transactional
-    public void checkout(Long userId, List<Long> bookIds, List<Integer> quantities){
-        List<CheckingOut> checkingOuts = new ArrayList<>();
+    public void checkout(Long userId, CheckingOutInfo checkingOutInfo ,Long bookId){
+        final List<CheckingOut> checkingOuts = checkingOutInfo.getCheckingOuts();
 
         // user와 책 찾기
         final Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) throw new RuntimeException("존재하지 않는 유저입니다.");
         final User user = userOptional.get();
-        final List<Book> books = bookRepository.findAllById(bookIds);
+        final Optional<Book> bookOptional = bookRepository.findById(bookId);
+        if (bookOptional.isEmpty()) throw new RuntimeException("존재하지 않는 책입니다.");
+        final Book book = bookOptional.get();
 
         // 대출생성
-        for (int i = 0; i < books.size(); i++){
-            checkingOuts.add(CheckingOut.createCheckingOut(books.get(i), quantities.get(i)));
-        }
-
+        checkingOuts.add(CheckingOut.createCheckingOut(book));
         //대출정보 생성
-
-        final CheckingOutInfo checkingOutInfo = CheckingOutInfo.createCheckingOutInfo(checkingOuts, user);
         checkingOutInfoRepository.save(checkingOutInfo);
+    }
+
+    @Transactional
+    public void bookReturn(Long checkingOutId, Long checkingOutInfoId) {
+        final Optional<CheckingOutInfo> checkingOutInfoOptional = checkingOutInfoRepository.findById(checkingOutInfoId);
+        if (checkingOutInfoOptional.isEmpty()) throw new RuntimeException("존재하지 않는 대출정보 입니다.");
+        final CheckingOutInfo checkingOutInfo = checkingOutInfoOptional.get();
+        final List<CheckingOut> checkingOuts = checkingOutInfo.getCheckingOuts();
+        for (CheckingOut checkingOut : checkingOuts) {
+            if (checkingOut.getId().equals(checkingOutId)){
+                checkingOut.bookReturn();
+            }
+        }
     }
 }

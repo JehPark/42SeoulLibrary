@@ -31,10 +31,10 @@ public class User extends BaseEntity{
     }
 
     public void saveCheckOutInfo(CheckingOutInfo checkingOutInfo){
+        this.checkingOutInfos.add(checkingOutInfo);
         if (checkingOutInfo.getUser() != this){
-            checkingOutInfos.add(checkingOutInfo);
+            checkingOutInfo.setUser(this);
         }
-        checkingOutInfo.setUser(this);
     }
 
     public void update(String name, String intraId) {
