@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,15 +17,15 @@ public class User extends BaseEntity{
     @Column(name = "user_id")
     private Long id;
 
-    private String name;
+    private String nickName;
     private String intraId;
 
     @OneToMany(mappedBy = "user")
     private List<CheckingOutInfo> checkingOutInfos = new ArrayList<>();
 
     @Builder
-    public User(String name, String intraId) {
-        this.name = name;
+    public User(String nickName, String intraId) {
+        this.nickName = nickName;
         this.intraId = intraId;
     }
 
@@ -37,8 +36,7 @@ public class User extends BaseEntity{
         }
     }
 
-    public void update(String name, String intraId) {
-        this.name = name;
-        this.intraId = intraId;
+    public void update(String name) {
+        this.nickName = name;
     }
 }

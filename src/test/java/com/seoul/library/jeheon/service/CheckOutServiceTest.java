@@ -66,12 +66,12 @@ class CheckOutServiceTest {
                 .build());
 
         userRepository.save(User.builder()
-                .name("Jeheon")
+                .nickName("Jeheon")
                 .intraId("jehpark")
                 .build());
 
         userRepository.save(User.builder()
-                .name("제헌")
+                .nickName("제헌")
                 .intraId("jehpark")
                 .build());
     }

@@ -54,7 +54,7 @@ class BookRepositoryTest {
     @Test
     public void saveBookTest() throws Exception{
         //when
-        final Optional<Book> book = bookRepository.findById(1L);
+        final Optional<Book> book = Optional.ofNullable(bookRepository.findBookByTitle("ORM JPA"));
         final Book book1 = book.get();
         //then
         assertThat(book1.getAuthor()).isEqualTo("김영한");
