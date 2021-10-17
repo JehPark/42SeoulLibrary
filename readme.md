@@ -12,15 +12,6 @@
 
 - 추가 예정: Spring Security, MySQL
 
-### Devops
-- AWS
-- Jenkins
-- Docker
-- Kubernetes
-
-### FrontEnd
-- React
-
 ## Usage
 - 도서 대출 반납
 
