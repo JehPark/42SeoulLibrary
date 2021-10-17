@@ -4,6 +4,11 @@
 
 ## Current Dependencies
 
+### Coding Convention
+
+Java : https://bit.ly/3DKDKl5  
+Spring : https://bit.ly/2YUgaDo 
+
 ### BackEnd
 - Spring Boot 2.5.5
 - Spring Data JPA
